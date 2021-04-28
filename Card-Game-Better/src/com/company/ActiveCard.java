@@ -11,33 +11,32 @@ public class ActiveCard extends Card
     }
 
     @Override
-    public boolean act()
+    public void act()
     {
         switch (getType())
         {
             case "2":
                 giveCard();
-                return false;
+                return;
             case "7":
                 dirtySeven();
-                return true;
+                return;
             case "8":
                 bonus();
-                return false;
+                return;
             case "10":
                 reverse();
-                return false;
+                return;
             case "A":
                 skip();
-                return false;
+                return;
             case "B":
                 if (game.getCurrentPlayer() instanceof Human)
                     wild();
 
                 else randomWild();
-                return false;
+                return;
             default:
-                return false;
         }
     }
 
@@ -45,7 +44,13 @@ public class ActiveCard extends Card
     {
         System.out.println(RED + "\tDIRTY SEVEN!!!" + RESET);
         System.out.println("\tNext player must take new cards or play seven if they can");
-        // game.penalty += 2 or game.penalty += 4 !!!!!
+
+        int penalty = game.getPenalty();
+
+        if (getColor() == Color.BLACK)
+            game.setPenalty(penalty + 4);
+        else
+            game.setPenalty(penalty + 2);
     }
 
     private void bonus() // 8

@@ -8,7 +8,7 @@ public class NormalCard extends Card
     }
 
     @Override
-    public boolean act()
+    public void act()
     {
         if (getColor() == Color.RED)
             System.out.print(RED + getColor() + " ");
@@ -24,6 +24,5 @@ public class NormalCard extends Card
 
 
         System.out.println(getType() + " is played!" + RESET);
-        return false;
     }
 }

@@ -28,7 +28,15 @@ public abstract class Card
 
     public int getScore() { return score; }
 
-    public abstract boolean act();
+    public boolean isRelative(Card center)
+    {
+        if (color == game.getCurrentColor())
+            return true;
+
+        else return color == center.getColor() || type.equals(center.getType());
+    }
+
+    public abstract void act();
 
     public String top()
     {
@@ -107,5 +115,4 @@ public abstract class Card
         System.out.println("\t\t" + middle());
         System.out.println("\t\t" + bottom());
     }
-
 }

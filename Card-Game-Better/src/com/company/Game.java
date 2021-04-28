@@ -17,6 +17,7 @@ public class Game
     private boolean isClockwise;
     private final int numOfPlayers;
     private int turn;
+    private int penalty;
     // used for printing the scoreboard
     public static final String GREEN = "\033[0;32m";   // GREEN
     public static final String RESET = "\033[0m";      // Text Reset
@@ -32,6 +33,9 @@ public class Game
         // randomly choose if the game is clockwise or not
         int r = random.nextInt(2);
         isClockwise = r == 0;
+        // prepare the game
+        setPlayers();
+        dealCards();
     }
 
     public Table getTable() { return table; }
@@ -40,9 +44,19 @@ public class Game
 
     public Player getCurrentPlayer() { return currentPlayer; }
 
+    public Color getCurrentColor() { return currentColor; }
+
     public Card getCenterCard() { return center; }
 
     public int getNumOfPlayers() { return numOfPlayers; }
+
+    public int getPenalty() { return penalty; }
+
+    public void setPenalty(int penalty)
+    {
+        if (penalty >= 0 && penalty % 2 == 0) // parameter has to be positive and a multiple of 2
+            this.penalty = penalty;
+    }
 
     public void setCurrentColor(Color color) { currentColor = color; }
 
@@ -98,15 +112,11 @@ public class Game
 
     public void play()
     {
-        // do the basic operations before the game is started
-        setPlayers();
-        dealCards();
-
         Card card;       // holds the card that has been just played
-        int penalty = 0; // increments by 2 or 4 if "seven" is played
+        penalty = 0;     // increments this variable by 2 or 4 if "seven" is played
 
         // the games continues until one of the players lose all of their cards
-        while (!currentPlayer.getCards().isEmpty())
+        while (!finished())
         {
             // update the center card and the game's color
             center = table.getTopCard();
@@ -121,17 +131,8 @@ public class Game
 
             if (card != null)  // player has played a card
             {
-                table.addTop(card); // add the card to the table
-                // card.act returns true if the card's number is seven
-                if (card.act())
-                {
-                    // update the penalty according to the card's color
-                    if (card.getColor() == Color.BLACK)
-                        penalty += 4;
-                    else
-                        penalty += 2;
-                }
-                else penalty = 0;
+                table.addTop(card); // put the card on the table
+                card.act();
             }
 
             else // player hasn't played any card in the following conditions
@@ -152,8 +153,7 @@ public class Game
                     // the player has played 8, bot didn't play any card for a bonus
                     // they get another chance after getting a new card
                     currentPlayer.add(table.takeBottomCard());
-                    System.out.println(currentPlayer.getName() + "gets another chance.");
-                    prev();
+                    center.act(); // "8" card (which is the center card) acts again as a bonus
                 }
                 else
                 {
@@ -162,8 +162,8 @@ public class Game
                     System.out.println(currentPlayer.getName() + " gets a new card!");
                 }
             }
+            currentPlayer.displayHand(); // display the current player's hand for them to see the result
             wait(3000);
-            displayGame();
         }
 
         System.out.println("\tGAME OVER\t");
@@ -171,11 +171,9 @@ public class Game
         scoreboard();
     }
 
-    public void reverseTheGame()
-    {
-        isClockwise = !isClockwise;
-        prev(); // idk if it's necessary
-    }
+    public boolean finished() { return currentPlayer.getCards().isEmpty(); }
+
+    public void reverseTheGame() { isClockwise = !isClockwise; }
 
     public void next()
     {
@@ -219,7 +217,6 @@ public class Game
 
     public void wait(int ms)
     {
-        System.out.println("\tPLEASE WAIT...");
         try
         {
             Thread.sleep(ms);
@@ -244,8 +241,10 @@ public class Game
     public void displayGame()
     {
         // print the number of cards of each player
+        System.out.println();
         for (Player player : players)
-            System.out.println("\t" + player.getName() + ": " + player.getCards().size() + " cards\n");
+            System.out.println("\t" + player.getName() + ": " + player.getCards().size() + " cards");
+        System.out.println();
 
         if (isClockwise)
             System.out.println("\tCLOCKWISE");
