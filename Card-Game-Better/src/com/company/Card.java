@@ -1,5 +1,11 @@
 package com.company;
 
+/**
+ * An abstracts representation of a card in UNO card game.
+ * A card, has a name, a color, and a score.
+ * @author KIMIA
+ * @since 4-25-2021
+ */
 public abstract class Card
 {
     private final String type;
@@ -14,6 +20,13 @@ public abstract class Card
     public static final String BLACK = "\033[0;30m";   // BLACK
     public static final String RESET = "\033[0m";      // Text Reset
 
+    /**
+     * Sets the given parameters to their corresponding field.
+     * @param type type of the card (like "4", "A", ...)
+     * @param color can be red, blue, green or black
+     * @param score score of the card
+     * @param game the game in which the card is being played in
+     */
     public Card(String type, Color color, int score, Game game)
     {
         this.type = type;
@@ -22,22 +35,29 @@ public abstract class Card
         this.game = game;
     }
 
+    /**
+     * @return the card's type
+     */
     public String getType() { return type; }
 
+    /**
+     * @return the card's color
+     */
     public Color getColor() { return color; }
 
+    /**
+     * @return the card's score
+     */
     public int getScore() { return score; }
 
-    public boolean isRelative(Card center)
-    {
-        if (color == game.getCurrentColor())
-            return true;
-
-        else return color == center.getColor() || type.equals(center.getType());
-    }
-
+    /**
+     * The action that a card can have.
+     */
     public abstract void act();
 
+    /**
+     * @return String format of the top of the card
+     */
     public String top()
     {
         if (color == Color.RED)
@@ -55,6 +75,9 @@ public abstract class Card
         return "";
     }
 
+    /**
+     * @return String format of the middle of the card
+     */
     public String middle()
     {
         if (color == Color.RED)
@@ -92,6 +115,9 @@ public abstract class Card
         return "";
     }
 
+    /**
+     * @return String format of the bottom of the card
+     */
     public String bottom()
     {
         if (color == Color.RED)
@@ -109,6 +135,9 @@ public abstract class Card
         return "";
     }
 
+    /**
+     * Displays the whole card by printing the top, middle and then the bottom of the card on the console.
+     */
     public void display()
     {
         System.out.println("\t\t" + top());

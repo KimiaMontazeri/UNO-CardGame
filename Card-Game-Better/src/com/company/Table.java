@@ -2,16 +2,32 @@ package com.company;
 
 import java.util.Stack;
 
+/**
+ * Represents a table of a game that has a stack of cards.
+ * Cards can be added to the top or the bottom of the stack.
+ * They can also be removed from a particular index or from the top.
+ * @author KIMIA
+ * @since 4-25-2021
+ */
 public class Table
 {
     private Stack<Card> centerCards;
 
+    /**
+     * The constructor creates a stack of cards and adds 52 cards to it (According the game's
+     * number of cards and their types and colors).
+     * @param game the game in which this table is
+     */
     public Table(Game game)
     {
         centerCards = new Stack<>();
         createDeckOfCards(game);
     }
 
+    /**
+     * Creates 52 cards.
+     * @param game the current game that the table is at
+     */
     private void createDeckOfCards(Game game)
     {
         Card RED;
@@ -149,10 +165,29 @@ public class Table
         centerCards.add(BLUE);
         centerCards.add(GREEN);
         centerCards.add(BLACK);
+
+        // check if the top card (Which is going to be the center card in the game) an instance of ActiveCard
+        checkTopCard();
     }
 
-    public Stack<Card> getTotalCards() { return centerCards; }
+    /**
+     * Checks if the top card (which is going to be the center card at the start of the game)
+     * is an active card or not. (Since we don't want the first center card to be an active card)
+     */
+    public void checkTopCard()
+    {
+        Card top = centerCards.peek();
+        while (top instanceof ActiveCard)
+        {
+            centerCards.insertElementAt(top, 0);
+            top = centerCards.peek();
+        }
+    }
 
+    /**
+     * @param index the index of the card to return
+     * @return the card with the given index
+     */
     public Card getCardByIndex(int index)
     {
         if (index >= 0 && index < centerCards.size())
@@ -164,16 +199,20 @@ public class Table
         return null;
     }
 
-    public void addTop(Card card)
-    {
-        centerCards.add(card);
-    }
+    /**
+     * Adds the card to the top of the table's cards.
+     * @param card a card to add to the top
+     */
+    public void addTop(Card card) { centerCards.add(card); }
 
-    public Card getTopCard()
-    {
-        return centerCards.peek();
-    }
+    /**
+     * @return the card on top of all the table's cards
+     */
+    public Card getTopCard() { return centerCards.peek(); }
 
+    /**
+     * @return the bottom card in the stack of the table's cards
+     */
     public Card takeBottomCard()
     {
         Card bottom = centerCards.firstElement();
@@ -181,8 +220,8 @@ public class Table
         return bottom;
     }
 
-    public void display()
-    {
-        centerCards.peek().display();
-    }
+    /**
+     * Displays the table by displaying the top card.
+     */
+    public void display() { centerCards.peek().display(); }
 }
